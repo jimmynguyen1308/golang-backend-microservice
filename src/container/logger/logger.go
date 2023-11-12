@@ -22,10 +22,10 @@ func CreateTransports(transports ...string) {
 		switch t {
 		case Console:
 			destinations = append(destinations, transport.Console{}.Default())
-			// case File:
-			// 	destinations = append(destinations, transports.File{}.Default())
-			// case Rollbar:
-			// 	destinations = append(destinations, transports.Rollbar{}.Default())
+		case File:
+			destinations = append(destinations, transport.File{}.Default())
+		case Rollbar:
+			destinations = append(destinations, transport.Rollbar{}.Default())
 		}
 	}
 }
