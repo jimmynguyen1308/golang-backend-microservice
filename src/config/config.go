@@ -26,7 +26,7 @@ func setupEnvironmentVariables() {
 			"ENVIRONMENT": "development",
 
 			// NATS Server
-			"NATS_HOST":    "nats://localhost:4222",
+			"NATS_HOST":    "localhost:4222",
 			"NATS_USER":    "local",
 			"NATS_PASS":    "password",
 			"NATS_TIMEOUT": "1000",
@@ -40,6 +40,9 @@ func setupEnvironmentVariables() {
 			"MONGO_HOST": "mongodb://localhost:27017",
 			"MONGO_USER": "root",
 			"MONGO_PASS": "password",
+
+			// Others
+			"ROLLBAR_ACCESS_TOKEN": "",
 		}
 		godotenv.Write(newEnv, envName)
 		godotenv.Load(envName)
