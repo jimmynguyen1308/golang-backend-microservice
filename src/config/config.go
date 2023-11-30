@@ -2,7 +2,8 @@ package config
 
 import (
 	"flag"
-	"log"
+	"golang-backend-microservice/container/log"
+	"golang-backend-microservice/container/utils"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -10,20 +11,23 @@ import (
 
 func Init() {
 	setupEnvironmentVariables()
+	initLogger()
+}
+
+func initLogger() {
+	log.CreateTransports(log.Console, log.File, log.Rollbar)
 }
 
 func setupEnvironmentVariables() {
 	envList := flag.String("env", ".env.development", "Env file")
 	if err := godotenv.Load(*envList); err != nil {
-		env, exists := os.LookupEnv("ENVIRONMENT")
+		_, exists := os.LookupEnv("ENVIRONMENT")
 		if exists {
-			log.Printf("Global ENVIRONMENT: %s\n", env)
 			return
 		}
 		var envName string = ".env.development"
-		log.Printf("Global ENVIRONMENT: %s\n", envName)
 		newEnv := map[string]string{
-			"ENVIRONMENT": "development",
+			"ENVIRONMENT": utils.ENV_DEVELOPMENT,
 
 			// NATS Server
 			"NATS_HOST":    "localhost:4222",
@@ -32,7 +36,7 @@ func setupEnvironmentVariables() {
 			"NATS_TIMEOUT": "1000",
 
 			// MySQL Server
-			"MYSQL_HOST": "localhost",
+			"MYSQL_HOST": "db",
 			"MYSQL_USER": "root",
 			"MYSQL_PASS": "password",
 

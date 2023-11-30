@@ -1,6 +1,6 @@
-package logger
+package log
 
-import transport "golang-backend-microservice/container/logger/transports"
+import transport "golang-backend-microservice/container/log/transports"
 
 const (
 	Console = "console"
@@ -9,10 +9,10 @@ const (
 )
 
 type Transports interface {
-	Debug(args ...interface{})
-	Info(args ...interface{})
-	Warning(args ...interface{})
-	Error(args ...interface{})
+	Debug(format string, args ...interface{})
+	Info(format string, args ...interface{})
+	Warn(format string, args ...interface{})
+	Error(format string, args ...interface{})
 }
 
 var destinations []Transports
@@ -30,26 +30,26 @@ func CreateTransports(transports ...string) {
 	}
 }
 
-func Debug(args ...interface{}) {
+func Debug(format string, args ...interface{}) {
 	for _, t := range destinations {
-		t.Debug(args...)
+		t.Debug(format, args...)
 	}
 }
 
-func Info(args ...interface{}) {
+func Info(format string, args ...interface{}) {
 	for _, t := range destinations {
-		t.Info(args...)
+		t.Info(format, args...)
 	}
 }
 
-func Warning(args ...interface{}) {
+func Warn(format string, args ...interface{}) {
 	for _, t := range destinations {
-		t.Warning(args...)
+		t.Warn(format, args...)
 	}
 }
 
-func Error(args ...interface{}) {
+func Error(format string, args ...interface{}) {
 	for _, t := range destinations {
-		t.Error(args...)
+		t.Error(format, args...)
 	}
 }

@@ -1,17 +1,21 @@
 package utils
 
-import "os"
-
-const (
-	Development = "development"
-	Testing     = "testing"
-	Staging     = "staging"
-	Production  = "production"
+import (
+	"os"
 )
 
-func IsEnv(envs ...string) bool {
+type Env = string
+
+const (
+	ENV_DEVELOPMENT Env = "development"
+	ENV_TESTING     Env = "testing"
+	ENV_STAGING     Env = "staging"
+	ENV_PRODUCTION  Env = "production"
+)
+
+func IsEnv(envs ...Env) bool {
 	for _, env := range envs {
-		if os.Getenv(env) != "" {
+		if os.Getenv("ENVIRONMENT") == env {
 			return true
 		}
 	}

@@ -19,10 +19,11 @@ func (c Console) Default() Console {
 	}
 	loglevel := log.ErrorLevel
 
-	if utils.IsEnv(utils.Development, utils.Testing, utils.Staging) {
+	if utils.IsEnv(utils.ENV_DEVELOPMENT, utils.ENV_TESTING, utils.ENV_STAGING) {
 		formatter = log.TextFormatter{
-			DisableColors: false,
-			FullTimestamp: false,
+			DisableColors:   false,
+			FullTimestamp:   true,
+			TimestampFormat: "15:04:05.000000",
 		}
 		loglevel = log.DebugLevel
 	}
@@ -37,18 +38,18 @@ func (c Console) Default() Console {
 	return c
 }
 
-func (c Console) Debug(args ...interface{}) {
-	c.Context.Debugln(args...)
+func (c Console) Debug(format string, args ...interface{}) {
+	c.Context.Debugf(format, args...)
 }
 
-func (c Console) Info(args ...interface{}) {
-	c.Context.Infoln(args...)
+func (c Console) Info(format string, args ...interface{}) {
+	c.Context.Infof(format, args...)
 }
 
-func (c Console) Warning(args ...interface{}) {
-	c.Context.Warningln(args...)
+func (c Console) Warn(format string, args ...interface{}) {
+	c.Context.Warningf(format, args...)
 }
 
-func (c Console) Error(args ...interface{}) {
-	c.Context.Errorln(args...)
+func (c Console) Error(format string, args ...interface{}) {
+	c.Context.Errorf(format, args...)
 }

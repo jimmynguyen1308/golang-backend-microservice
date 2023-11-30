@@ -14,7 +14,7 @@ type File struct {
 func (f File) Default() File {
 	loglevel := log.ErrorLevel
 
-	if utils.IsEnv(utils.Development, utils.Testing, utils.Staging) {
+	if utils.IsEnv(utils.ENV_DEVELOPMENT, utils.ENV_TESTING, utils.ENV_STAGING) {
 		loglevel = log.DebugLevel
 	}
 
@@ -33,18 +33,18 @@ func (f File) Default() File {
 	return f
 }
 
-func (f File) Debug(args ...interface{}) {
-	f.Context.Debugln(args...)
+func (f File) Debug(format string, args ...interface{}) {
+	f.Context.Debugf(format, args...)
 }
 
-func (f File) Info(args ...interface{}) {
-	f.Context.Infoln(args...)
+func (f File) Info(format string, args ...interface{}) {
+	f.Context.Infof(format, args...)
 }
 
-func (f File) Warning(args ...interface{}) {
-	f.Context.Warningln(args...)
+func (f File) Warn(format string, args ...interface{}) {
+	f.Context.Warningf(format, args...)
 }
 
-func (f File) Error(args ...interface{}) {
-	f.Context.Errorln(args...)
+func (f File) Error(format string, args ...interface{}) {
+	f.Context.Errorf(format, args...)
 }
