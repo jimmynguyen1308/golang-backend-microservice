@@ -9,22 +9,22 @@ import (
 	sq "github.com/Masterminds/squirrel"
 )
 
-type Column struct {
+type column struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }
 
-func BuildQueryColumns(data map[string]interface{}) []Column {
-	col := make([]Column, len(data))
+func buildQueryColumns(data map[string]interface{}) []column {
+	col := make([]column, len(data))
 	i := 0
 	for key, val := range data {
-		col[i] = Column{Name: key, Value: fmt.Sprintf("%v", val)}
+		col[i] = column{Name: key, Value: fmt.Sprintf("%v", val)}
 		i++
 	}
 	return col
 }
 
-func BuildSelectQuery(req *model.MySqlRequestData) (string, []interface{}, error) {
+func buildSelectQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
 	query := sq.Select("*").From(req.Table)
 
 	if len(req.Where) > 0 {
@@ -55,10 +55,10 @@ func BuildSelectQuery(req *model.MySqlRequestData) (string, []interface{}, error
 	return queryString, args, nil
 }
 
-func BuildInsertQuery(req *model.MySqlRequestData) (string, []interface{}, error) {
+func buildInsertQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
 	query := sq.Insert(req.Table)
 
-	data := BuildQueryColumns(req.Data)
+	data := buildQueryColumns(req.Data)
 	cols := make([]string, len(data))
 	vals := make([]interface{}, len(data))
 	for i, d := range data {
@@ -75,7 +75,7 @@ func BuildInsertQuery(req *model.MySqlRequestData) (string, []interface{}, error
 	return queryString, args, nil
 }
 
-func BuildUpdateQuery(req *model.MySqlRequestData) (string, []interface{}, error) {
+func buildUpdateQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
 	query := sq.Update(req.Table)
 
 	if len(req.Where) == 0 && len(req.WhereGreater) == 0 &&
@@ -96,7 +96,7 @@ func BuildUpdateQuery(req *model.MySqlRequestData) (string, []interface{}, error
 		query = query.Where(sq.NotEq(req.WhereNot))
 	}
 
-	data := BuildQueryColumns(req.Data)
+	data := buildQueryColumns(req.Data)
 	for _, d := range data {
 		query = query.Set(d.Name, d.Value)
 	}
@@ -108,7 +108,7 @@ func BuildUpdateQuery(req *model.MySqlRequestData) (string, []interface{}, error
 	return queryString, args, nil
 }
 
-func BuildDeleteQuery(req *model.MySqlRequestData) (string, []interface{}, error) {
+func buildDeleteQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
 	query := sq.Delete(req.Table)
 
 	if len(req.Where) == 0 && len(req.WhereGreater) == 0 &&

@@ -2,32 +2,28 @@ package main
 
 import (
 	"golang-backend-microservice/config"
-	"golang-backend-microservice/container/logger"
-	"golang-backend-microservice/dataservice/mysql"
-	"golang-backend-microservice/dataservice/nats"
-	"log"
-
+	"golang-backend-microservice/container/log"
+	"golang-backend-microservice/dataservice"
 	"runtime"
 
-	"github.com/jmoiron/sqlx"
-	"github.com/nats-io/nats.go/micro"
+	"github.com/nats-io/nats.go"
 )
 
 func main() {
 	config.Init()
 
-	svc := nats.CreateNatsMicroservice()
-	mysql := mysql.OpenMySqlConnection()
-	if svc != nil && mysql != nil {
-		if err := mockSql(svc, mysql); err != nil {
-			logger.Error(err)
-			log.Fatal(err)
+	nc := dataservice.OpenNatsConnection()
+	if nc != nil {
+		if err := mockSql(nc); err != nil {
+			log.Error("Error: %s", err)
+			return
 		}
 	}
+	log.Info(log.InfoNatsMicroCreated)
 
 	runtime.Goexit()
 }
 
-func mockSql(svc micro.Service, mysql *sqlx.DB) error {
+func mockSql(nc *nats.Conn) error {
 	return nil
 }

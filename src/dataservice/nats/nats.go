@@ -2,10 +2,9 @@ package nats
 
 import (
 	"fmt"
-	"golang-backend-microservice/container/logger"
-	"log"
+	"golang-backend-microservice/container/log"
 	"net/http"
-	"os"
+	"time"
 
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/micro"
@@ -13,64 +12,66 @@ import (
 )
 
 type ServiceConfig struct {
-	ServiceName  string
-	Version      string
-	Description  string
-	EndpointName string
+	ServiceName  string // Micro-service name
+	Version      string // Micro-service version
+	Description  string // Micro-service description
+	EndpointName string // Micro-service endpoint name
 }
 
-func CreateNatsMicroservice() micro.Service {
-	svcConfig := ServiceConfig{
-		ServiceName:  "Database",
-		Version:      "0.1.0-development",
-		Description:  "Microservice for database requests and responses",
-		EndpointName: "database",
+type Connection struct {
+	User string // NATS username
+	Pass string // NATS password
+	Host string // NATS host
+	ServiceConfig
+}
+
+func (c Connection) Open() (*nats.Conn, micro.Service) {
+	var nc *nats.Conn
+	var svc micro.Service
+
+	nc = c.openNatsConnection()
+	if nc != nil {
+		svc = c.addNatsService(nc)
+		rollbar.SetCodeVersion(c.Version)
+		rollbar.SetCustom(map[string]interface{}{
+			"ServiceName": c.ServiceName,
+			"ServiceID":   svc.Info().ID,
+		})
+		return nc, svc
 	}
 
-	logger.CreateTransports(logger.Console, logger.File, logger.Rollbar)
-	rollbar.SetCodeVersion(svcConfig.Version)
-	rollbar.SetCustom(map[string]interface{}{
-		"ServiceName": svcConfig.ServiceName,
-	})
-
-	nc := openNatsConnection()
-	svc := addNatsMicroService(svcConfig, nc)
-	rollbar.SetCustom(map[string]interface{}{
-		"ServiceName": svcConfig.ServiceName,
-		"ServiceID":   svc.Info().ID,
-	})
-	return svc
+	return nc, svc
 }
 
-func openNatsConnection() *nats.Conn {
-	nc, err := nats.Connect(os.Getenv("NATS_HOST"),
-		nats.UserInfo(os.Getenv("NATS_USER"), os.Getenv("NATS_PASS")))
+func (c Connection) openNatsConnection() *nats.Conn {
+	nc, err := nats.Connect(
+		c.Host, nats.UserInfo(c.User, c.Pass),
+		nats.PingInterval(20*time.Second), nats.MaxPingsOutstanding(5),
+	)
 	if err != nil {
-		logger.Error("Error connecting to NATS: ", err)
-		log.Fatalf("Error connecting to NATS: %s\n", err)
+		log.Error(log.ErrNatsConnect, err)
 		return nil
 	}
 	return nc
 }
 
-func addNatsMicroService(config ServiceConfig, nc *nats.Conn) micro.Service {
+func (c Connection) addNatsService(nc *nats.Conn) micro.Service {
 	svc, err := micro.AddService(nc, micro.Config{
-		Name:        config.ServiceName,
-		Version:     config.Version,
-		Description: config.Description,
+		Name:        c.ServiceName,
+		Version:     c.Version,
+		Description: c.Description,
 		Endpoint: &micro.EndpointConfig{
-			Subject: config.EndpointName,
+			Subject: c.EndpointName,
 			Handler: micro.HandlerFunc(func(req micro.Request) {
 				req.Respond([]byte(fmt.Sprint(http.StatusOK)))
 			}),
 		},
-		ErrorHandler: func(s micro.Service, n *micro.NATSError) {
-			logger.Error(n.Error())
+		ErrorHandler: func(s micro.Service, e *micro.NATSError) {
+			log.Error(e.Error())
 		},
 	})
 	if err != nil {
-		logger.Error("Error adding service: ", err)
-		log.Fatalf("Error adding service: %s\n", err)
+		log.Error(log.ErrNatsMicroAdd, err)
 		return nil
 	}
 	return svc
