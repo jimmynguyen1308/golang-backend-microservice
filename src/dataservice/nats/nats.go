@@ -12,16 +12,16 @@ import (
 )
 
 type ServiceConfig struct {
-	ServiceName  string // Micro-service name
-	Version      string // Micro-service version
-	Description  string // Micro-service description
-	EndpointName string // Micro-service endpoint name
+	ServiceName  string
+	Version      string
+	Description  string
+	EndpointName string
 }
 
 type Connection struct {
-	User string // NATS username
-	Pass string // NATS password
-	Host string // NATS host
+	User string
+	Pass string
+	Host string
 	ServiceConfig
 }
 

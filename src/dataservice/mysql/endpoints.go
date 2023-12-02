@@ -13,7 +13,7 @@ func SelectRecord(db *sqlx.DB) micro.HandlerFunc {
 	return func(req micro.Request) {
 		var data model.MySqlReqArgs
 		json.Unmarshal(req.Data(), &data)
-		query, args, err := buildSelectQuery(&data)
+		query, args, err := BuildSelectQuery(&data)
 		if err != nil {
 			log.Error(err.Error())
 			// TODO: send Nats response
@@ -51,7 +51,7 @@ func InsertRecord(db *sqlx.DB) micro.HandlerFunc {
 	return func(req micro.Request) {
 		var data model.MySqlReqArgs
 		json.Unmarshal(req.Data(), &data)
-		query, args, err := buildInsertQuery(&data)
+		query, args, err := BuildInsertQuery(&data)
 		if err != nil {
 			log.Error(err.Error())
 			// TODO: send Nats response
@@ -71,7 +71,7 @@ func UpdateRecord(db *sqlx.DB) micro.HandlerFunc {
 	return func(req micro.Request) {
 		var data model.MySqlReqArgs
 		json.Unmarshal(req.Data(), &data)
-		query, args, err := buildUpdateQuery(&data)
+		query, args, err := BuildUpdateQuery(&data)
 		if err != nil {
 			log.Error(err.Error())
 			// TODO: send Nats response
@@ -91,7 +91,7 @@ func DeleteRecord(db *sqlx.DB) micro.HandlerFunc {
 	return func(req micro.Request) {
 		var data model.MySqlReqArgs
 		json.Unmarshal(req.Data(), &data)
-		query, args, err := buildDeleteQuery(&data)
+		query, args, err := BuildDeleteQuery(&data)
 		if err != nil {
 			log.Error(err.Error())
 			// TODO: send Nats response

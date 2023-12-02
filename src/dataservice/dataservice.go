@@ -2,6 +2,7 @@ package dataservice
 
 import (
 	"golang-backend-microservice/container/log"
+	MongoDb "golang-backend-microservice/dataservice/mongodb"
 	MySql "golang-backend-microservice/dataservice/mysql"
 	Nats "golang-backend-microservice/dataservice/nats"
 	"os"
@@ -53,7 +54,23 @@ func OpenNatsConnection() *nats.Conn {
 		}
 
 		// MongoDB endpoints
-		// mongo := database.AddGroup("mongo")
+		mongo := database.AddGroup("mongo")
+		if err := mongo.AddEndpoint("find", MongoDb.FindRecord()); err != nil {
+			log.Error(log.ErrNatsMicroAdd, err.Error())
+			return nc
+		}
+		if err := mongo.AddEndpoint("insert", MongoDb.InsertRecord()); err != nil {
+			log.Error(log.ErrNatsMicroAdd, err.Error())
+			return nc
+		}
+		if err := mongo.AddEndpoint("update", MongoDb.UpdateRecord()); err != nil {
+			log.Error(log.ErrNatsMicroAdd, err.Error())
+			return nc
+		}
+		if err := mongo.AddEndpoint("delete", MongoDb.DeleteRecord()); err != nil {
+			log.Error(log.ErrNatsMicroAdd, err.Error())
+			return nc
+		}
 	}
 
 	return nc

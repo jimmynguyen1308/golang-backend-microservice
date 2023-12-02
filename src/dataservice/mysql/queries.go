@@ -14,7 +14,7 @@ type column struct {
 	Value string `json:"value"`
 }
 
-func buildQueryColumns(data map[string]interface{}) []column {
+func BuildQueryColumns(data map[string]interface{}) []column {
 	col := make([]column, len(data))
 	i := 0
 	for key, val := range data {
@@ -24,7 +24,7 @@ func buildQueryColumns(data map[string]interface{}) []column {
 	return col
 }
 
-func buildSelectQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
+func BuildSelectQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
 	query := sq.Select("*").From(req.Table)
 
 	if len(req.Where) > 0 {
@@ -55,10 +55,10 @@ func buildSelectQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
 	return queryString, args, nil
 }
 
-func buildInsertQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
+func BuildInsertQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
 	query := sq.Insert(req.Table)
 
-	data := buildQueryColumns(req.Data)
+	data := BuildQueryColumns(req.Data)
 	cols := make([]string, len(data))
 	vals := make([]interface{}, len(data))
 	for i, d := range data {
@@ -75,7 +75,7 @@ func buildInsertQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
 	return queryString, args, nil
 }
 
-func buildUpdateQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
+func BuildUpdateQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
 	query := sq.Update(req.Table)
 
 	if len(req.Where) == 0 && len(req.WhereGreater) == 0 &&
@@ -96,7 +96,7 @@ func buildUpdateQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
 		query = query.Where(sq.NotEq(req.WhereNot))
 	}
 
-	data := buildQueryColumns(req.Data)
+	data := BuildQueryColumns(req.Data)
 	for _, d := range data {
 		query = query.Set(d.Name, d.Value)
 	}
@@ -108,7 +108,7 @@ func buildUpdateQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
 	return queryString, args, nil
 }
 
-func buildDeleteQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
+func BuildDeleteQuery(req *model.MySqlReqArgs) (string, []interface{}, error) {
 	query := sq.Delete(req.Table)
 
 	if len(req.Where) == 0 && len(req.WhereGreater) == 0 &&

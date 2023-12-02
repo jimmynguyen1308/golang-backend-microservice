@@ -10,9 +10,9 @@ import (
 )
 
 type Connection struct {
-	User string // MySQL username
-	Pass string // MySQL password
-	Host string // MySQL database name
+	User string
+	Pass string
+	Host string
 }
 
 func (c Connection) Open() *sqlx.DB {

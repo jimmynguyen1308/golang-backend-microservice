@@ -13,6 +13,7 @@ type MySqlReqArgs struct {
 type Book struct {
 	Title       string `json:"titles"`
 	Author      string `json:"author"`
+	Genre       string `json:"genre"`
 	Year        int    `json:"year"`
 	Description string `json:"description"`
 }
