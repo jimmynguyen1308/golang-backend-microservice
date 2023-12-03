@@ -2,6 +2,7 @@ package dataservice
 
 import (
 	"golang-backend-microservice/container/log"
+	"golang-backend-microservice/container/utils"
 	MongoDb "golang-backend-microservice/dataservice/mongodb"
 	MySql "golang-backend-microservice/dataservice/mysql"
 	Nats "golang-backend-microservice/dataservice/nats"
@@ -11,13 +12,18 @@ import (
 )
 
 func OpenNatsConnection() *nats.Conn {
+	version := "0.1.0"
+	if !utils.IsEnv(utils.ENV_PRODUCTION) {
+		version += "-" + os.Getenv("ENVIRONMENT")
+	}
+
 	nc, svc := Nats.Connection{
 		User: os.Getenv("NATS_USER"),
 		Pass: os.Getenv("NATS_PASS"),
 		Host: os.Getenv("NATS_HOST"),
 		ServiceConfig: Nats.ServiceConfig{
 			ServiceName:  "Database",
-			Version:      "0.1.0-development",
+			Version:      version,
 			Description:  "Microservice for database requests and responses",
 			EndpointName: "database",
 		},
