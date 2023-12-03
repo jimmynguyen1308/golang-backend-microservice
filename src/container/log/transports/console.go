@@ -1,6 +1,7 @@
 package transport
 
 import (
+	"golang-backend-microservice/container/time"
 	"golang-backend-microservice/container/utils"
 	"os"
 
@@ -15,7 +16,7 @@ func (c Console) Default() Console {
 	formatter := log.TextFormatter{
 		DisableColors:   true,
 		FullTimestamp:   true,
-		TimestampFormat: "2006-01-02 15:04:05",
+		TimestampFormat: time.DateTimeLayout,
 	}
 	loglevel := log.ErrorLevel
 
@@ -23,7 +24,7 @@ func (c Console) Default() Console {
 		formatter = log.TextFormatter{
 			DisableColors:   false,
 			FullTimestamp:   true,
-			TimestampFormat: "15:04:05.000000",
+			TimestampFormat: time.TimeLayoutInMilliseconds,
 		}
 		loglevel = log.DebugLevel
 	}

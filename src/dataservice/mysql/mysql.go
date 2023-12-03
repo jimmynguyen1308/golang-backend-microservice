@@ -21,7 +21,7 @@ func (c Connection) Open() *sqlx.DB {
 		log.Error(log.ErrMySqlConnect, err.Error())
 		return nil
 	}
-	db.SetConnMaxLifetime(time.Second * 30)
+	db.SetConnMaxLifetime(30 * time.Second)
 	db.SetConnMaxIdleTime(3000)
 	db.SetMaxOpenConns(100)
 	db.SetMaxIdleConns(10)

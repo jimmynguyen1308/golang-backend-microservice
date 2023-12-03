@@ -18,12 +18,11 @@ func main() {
 	var nc *nats.Conn
 	for {
 		nc = dataservice.OpenNatsConnection()
-		if nc == nil {
-			log.Debug("Retry in %d seconds...", RETRY_TIMER)
-			time.Sleep(RETRY_TIMER * time.Second)
-		} else {
+		if nc != nil {
 			break
 		}
+		log.Debug("Retry in %d seconds...", RETRY_TIMER)
+		time.Sleep(RETRY_TIMER * time.Second)
 	}
 	log.Info(log.InfoNatsMicroCreated)
 	runtime.Goexit()
