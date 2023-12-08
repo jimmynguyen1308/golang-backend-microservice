@@ -12,9 +12,9 @@ help: Makefile
 	@sed -n 's/^##//p' $< | column -t -s ':' | sed -e 's/^/ /' 
 	@echo
 
-## dev: Run program in dev mode
-.PHONY: dev
-dev:
+## start: Run program in dev mode
+.PHONY: start
+start: test
 	go run ./src/cmd/main.go
 
 ## test: Run unit tests
@@ -28,10 +28,5 @@ test:
 ## build: Generate Docker image
 .PHONY: build
 build:
-	GOOS=linux GOARCH=arm64 go build -o ./build/${NAME} ./src/cmd
+	go build -o ./build/${NAME} ./src/cmd
 	docker build -t ${NAME}:${VERSION} ./
-
-## clean: Clean Docker image
-.PHONY: clean
-clean:
-	docker rmi -f $$(docker images -f "dangling=true" -q)
