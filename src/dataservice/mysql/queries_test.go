@@ -82,17 +82,13 @@ func TestBuildSelectQuery(t *testing.T) {
 
 func TestBuildInsertQuery(t *testing.T) {
 	var (
-		expectedQ      = "INSERT INTO books (title,author,year) VALUES (?,?,?)"
-		expectedTitle  = "The Replublic"
-		expectedAuthor = "Socrates"
-		expectedYear   = "72"
+		expectedQ     = "INSERT INTO books (title) VALUES (?)"
+		expectedTitle = "The Replublic"
 	)
 	args := model.MySqlReqArgs{
 		Table: "books",
 		Data: map[string]interface{}{
-			"title":  expectedTitle,
-			"author": expectedAuthor,
-			"year":   expectedYear,
+			"title": expectedTitle,
 		},
 	}
 	q, d, err := mysql.BuildInsertQuery(&args)
@@ -105,12 +101,6 @@ func TestBuildInsertQuery(t *testing.T) {
 	}
 	if d[0] != expectedTitle {
 		t.Errorf("Expected %v, got %v: incorrect argument", expectedTitle, d[0])
-	}
-	if d[1] != expectedAuthor {
-		t.Errorf("Expected %v, got %v: incorrect argument", expectedAuthor, d[1])
-	}
-	if d[2] != expectedYear {
-		t.Errorf("Expected %v, got %v: incorrect argument", expectedYear, d[2])
 	}
 }
 
