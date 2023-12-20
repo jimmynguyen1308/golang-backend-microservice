@@ -3,7 +3,9 @@ package mysql
 import (
 	"encoding/json"
 	"golang-backend-microservice/container/log"
+	"golang-backend-microservice/dataservice/nats"
 	"golang-backend-microservice/model"
+	"net/http"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/nats-io/nats.go/micro"
@@ -16,13 +18,19 @@ func SelectRecord(db *sqlx.DB) micro.HandlerFunc {
 		query, args, err := BuildSelectQuery(&data)
 		if err != nil {
 			log.Error(err.Error())
-			// TODO: send Nats response
+			nats.StatusResponse{
+				Status: http.StatusBadRequest,
+				Error:  err.Error(),
+			}.Respond(req)
 			return
 		}
 		results, err := db.Queryx(query, args...)
 		if err != nil {
 			log.Error(err.Error())
-			// TODO: send Nats response
+			nats.StatusResponse{
+				Status: http.StatusInternalServerError,
+				Error:  err.Error(),
+			}.Respond(req)
 			return
 		}
 
@@ -41,7 +49,10 @@ func SelectRecord(db *sqlx.DB) micro.HandlerFunc {
 			// TODO: send Nats response
 		default:
 			log.Error(log.ErrMySqlUnknwonTable, data.Table)
-			// TODO: send Nats response
+			nats.StatusResponse{
+				Status: http.StatusNotFound,
+				Error:  log.ErrMySqlUnknwonTable,
+			}.Respond(req)
 		}
 		results.Rows.Close()
 	}

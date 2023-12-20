@@ -9,8 +9,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const RETRY_TIMER = 30
-
 func Init() {
 	setupEnvironmentVariables()
 	initLogger()
