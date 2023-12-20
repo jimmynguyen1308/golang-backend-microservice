@@ -1,13 +1,16 @@
 package dataservice
 
 import (
+	"golang-backend-microservice/config"
 	"golang-backend-microservice/container/log"
 	"golang-backend-microservice/container/utils"
 	MongoDb "golang-backend-microservice/dataservice/mongodb"
 	MySql "golang-backend-microservice/dataservice/mysql"
 	Nats "golang-backend-microservice/dataservice/nats"
 	"os"
+	"time"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/nats-io/nats.go"
 )
 
@@ -32,11 +35,19 @@ func OpenNatsConnection() *nats.Conn {
 		return nil
 	}
 
-	sql := MySql.Connection{
-		User: os.Getenv("MYSQL_USER"),
-		Pass: os.Getenv("MYSQL_PASS"),
-		Host: os.Getenv("MYSQL_HOST"),
-	}.Open()
+	var sql *sqlx.DB
+	for {
+		sql = MySql.Connection{
+			User: os.Getenv("MYSQL_USER"),
+			Pass: os.Getenv("MYSQL_PASS"),
+			Host: os.Getenv("MYSQL_HOST"),
+		}.Open()
+		if sql != nil {
+			break
+		}
+		log.Debug(log.DebugConnectionRetry, config.RETRY_TIMER)
+		time.Sleep(config.RETRY_TIMER * time.Second)
+	}
 
 	database := svc.AddGroup("database")
 	{

@@ -10,8 +10,6 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-const RETRY_TIMER = 30
-
 func main() {
 	config.Init()
 
@@ -21,9 +19,9 @@ func main() {
 		if nc != nil {
 			break
 		}
-		log.Debug("Retry in %d seconds...", RETRY_TIMER)
-		time.Sleep(RETRY_TIMER * time.Second)
+		log.Debug(log.DebugConnectionRetry, config.RETRY_TIMER)
+		time.Sleep(config.RETRY_TIMER * time.Second)
 	}
-	log.Info(log.InfoNatsMicroCreated)
+	log.Info(log.InfoConnectionCreated)
 	runtime.Goexit()
 }
