@@ -31,6 +31,12 @@ func main() {
 		Table: "book",
 		Where: map[string]interface{}{"author": "JK Rowling"},
 	}
+
+	// TODO:
+	// - [ ] Add Gin routes to /container
+	// - [ ] Bind each route to each NATS request accordingly
+	// - [ ] Add function setupRoutes() to main.go
+
 	res, err := Nats.Request[model.MySqlReqArgs](nc, "database.sql.select", params)
 	if err != nil {
 		log.Error(err.Error())
