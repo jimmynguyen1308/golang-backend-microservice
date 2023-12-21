@@ -18,8 +18,9 @@ type StatusResponse struct {
 }
 
 type DataResponse[T responsive] struct {
-	StatusResponse
-	Data []T `json:"data,omitempty"`
+	Status int    `json:"status"`
+	Error  string `json:"error,omitempty"`
+	Data   []T    `json:"data"`
 }
 
 func (res StatusResponse) Respond(req micro.Request) error {
