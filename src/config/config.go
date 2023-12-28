@@ -28,6 +28,7 @@ func setupEnvironmentVariables() {
 		var envName string = ".env.development"
 		newEnv := map[string]string{
 			"ENVIRONMENT": utils.ENV_DEVELOPMENT,
+			"SERVER_PORT": "8080",
 
 			// NATS Server
 			"NATS_HOST":    "localhost:4222",

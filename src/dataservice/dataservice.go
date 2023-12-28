@@ -4,12 +4,14 @@ import (
 	"golang-backend-microservice/config"
 	"golang-backend-microservice/container/log"
 	"golang-backend-microservice/container/utils"
+	Gin "golang-backend-microservice/dataservice/gin"
 	MongoDb "golang-backend-microservice/dataservice/mongodb"
 	MySql "golang-backend-microservice/dataservice/mysql"
 	Nats "golang-backend-microservice/dataservice/nats"
 	"os"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/nats-io/nats.go"
 )
@@ -91,4 +93,8 @@ func OpenNatsConnection() *nats.Conn {
 	}
 
 	return nc
+}
+
+func SetupRoutes(nc *nats.Conn) *gin.Engine {
+	return Gin.SetupRoutes(nc)
 }

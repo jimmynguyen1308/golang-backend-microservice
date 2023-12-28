@@ -6,6 +6,7 @@ import (
 	"golang-backend-microservice/dataservice"
 	Nats "golang-backend-microservice/dataservice/nats"
 	"golang-backend-microservice/model"
+	"os"
 	"runtime"
 	"time"
 
@@ -26,6 +27,9 @@ func main() {
 	}
 	log.Info(log.InfoConnectionCreated)
 
+	r := dataservice.SetupRoutes(nc)
+	r.Run(":" + os.Getenv("SERVER_PORT"))
+
 	// Mock Nats request
 	params := model.MySqlReqArgs{
 		Table: "book",
@@ -33,9 +37,9 @@ func main() {
 	}
 
 	// TODO:
-	// - [ ] Add Gin routes to /container
+	// - [x] Add Gin routes to /container
 	// - [ ] Bind each route to each NATS request accordingly
-	// - [ ] Add function setupRoutes() to main.go
+	// - [x] Add function setupRoutes() to main.go
 
 	res, err := Nats.Request[model.MySqlReqArgs](nc, "database.sql.select", params)
 	if err != nil {
